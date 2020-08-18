@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Issue Records</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+        integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href={% static "index.css" %}>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+        <a href="{% url 'signup' %}">Sign-Up</a> /
+        <a href="{% url 'logout' %}">logout</a> /
+        <strong>Welcome {{user.username}}</strong>
+        <div class="testbox">
+            <form method="POST" action="add">
+                {% csrf_token %}
+                <div class="item">
+                    <label for="name">Issue Desc<span>*</span></label>
+                    <div class="name-item">
+                        <textarea rows="10" style="width: 100%;" type="text" name="desc" placeholder="First"
+                            required></textarea>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="name-item">
+                        <div>
+                            <label for="bdate">Reported On<span>*</span></label>
+                            <input type="date" name="rdate" required />
+                            <!-- <i class="fas fa-calendar"></i> -->
+                        </div>
+                        <div>
+                            <label for="issueSelect">Issue Status<span>*</span></label>
+                            <select id="issueSelect" class="input" name="issuestatus">
+                                <option value="Open" selected>Open</option>
+                                <option value="Close">Close</option>
+                                <option value="TBD" >TBD</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="issuetype">Issue Type<span>*</span></label>
+                            <select id="issuetype" class="input" name="issuetype">
+                                <option value="UI" selected>UI</option>
+                                <option value="Functional">Functional</option>
+                                <option value="DB" >DB</option>
+                                <option value="Others" >Others</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="env">Environment<span>*</span></label>
+                            <select id="env" class="input" name="envname">
+                                <option value="Production" selected>Production</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="name-item">
+                        <div>
+                            <label for="created_by">Created By<span>*</span></label>
+                            <input id="created_by" type="text" name="creator" required/>
+                        </div>
+                        <div>
+                            <label for="logged_by">Logged By<span>*</span></label>
+                            <input id="logged_by" type="text" value="{{user.username}}" name="logger" required readonly/>
+                        </div>
+                        <div>
+                            <button type="submit" class="button">+ Add</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    <div class="textbox">
+        <table id="records" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Issue Desc.</th>
+                    <th>Created On</th>
+                    <th>Created By</th>
+                    <th>Issue Type</th>
+                    <th>Issue Status</th>
+                    <th>Logged By</th>
+                    <th>Environment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td>{{i.desc}}</td>
+                    <td>{{i.created_on}}</td>
+                    <td>{{i.created_by}}</td>
+                    <td>{{i.type}}</td>
+                    <td>{{i.status}}</td>
+                    <td>{{i.logged_by}}</td>
+                    <td>{{i.environment}}</td>
+                </tr>
+                
+
+                {%endfor%}
+            </tbody>
+        </table>
+
+    
+    </div>
+    <script>
+
+        $(document).ready(function(){
+            $('#records').DataTable();
+        });
+        // function addajax(){
+        //     var obj={
+        //         "desc":$('#desc').val,
+        //         "reported_on":$('#rdate').val,
+        //         "status":$('#issueSelect').val ,
+        //         "type":$('#issueType').val,
+        //         "created_by":$("#created_by").val,
+        //         "logged_by":$("#logged_by").val,
+        //         "env":$("#env").val
+        //     }
+        //     $.ajax({
+        //         method:'post',
+        //         url:'/add/record',
+        //         data:obj
+        //     }).then(function(response){
+        //         // location.reload(true);
+        //         console.log(obj);
+        //     }).then(function(res){
+        //         console.log('error',res);
+        //     });
+        // }
+    </script>
+</body>
+
+</html>
